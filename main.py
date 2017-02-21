@@ -1,5 +1,7 @@
 import pygame
 import operator
+import random
+import math
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -36,9 +38,13 @@ class Screen:
 
 
 class Asteroid:
-    def __init__(self):
-        self.pos = [300.0, 400.0]
-        self.dir = [5.0, 0.0]
+    def __init__(self, pos=None):
+        if not pos:
+            pos = [300.0, 400.0]
+
+        angle = 2 * math.pi * random.random()
+        self.pos = pos
+        self.dir = [5.0*math.sin(angle), 5.0*math.cos(angle)]
 
     def draw(self, surface):
         pos = [int(c) for c in self.pos]
@@ -49,7 +55,12 @@ class Asteroid:
 
 
 screen = Screen()
-asteroid = Asteroid()
+
+asteroids = []
+for _ in range(6):
+    angle = 2 * math.pi * random.random()
+    pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
+    asteroids.append(Asteroid(pos))
 
 
 while not done:
@@ -59,11 +70,12 @@ while not done:
         ):
             done = True
 
-    asteroid.animate()
-    screen.contain(asteroid)
-
     screen.draw()
-    screen.draw_object(asteroid)
+
+    for asteroid in asteroids:
+        asteroid.animate()
+        screen.contain(asteroid)
+        screen.draw_object(asteroid)
 
     pygame.display.flip()
     clock.tick(30)
