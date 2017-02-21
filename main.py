@@ -11,13 +11,16 @@ COLOR_BACKGROUND = (0, 0, 80)
 COLOR_CIRCLE = (0, 100, 0)
 
 
-class Cosmos:
+class Screen:
     def __init__(self, size=(800, 800)):
         self.size = size
-        self.screen = pygame.display.set_mode(size)
+        self.background = pygame.display.set_mode(size)
 
     def draw(self):
-        self.screen.fill(COLOR_BACKGROUND)
+        self.background.fill(COLOR_BACKGROUND)
+
+    def draw_object(self, obj):
+        obj.draw(self.background)
 
     def contain(self, asteroid):
         pos = asteroid.pos
@@ -45,7 +48,7 @@ class Asteroid:
         self.pos = list(map(operator.add, self.pos, self.dir))
 
 
-cosmos = Cosmos()
+screen = Screen()
 asteroid = Asteroid()
 
 
@@ -56,11 +59,11 @@ while not done:
         ):
             done = True
 
-    cosmos.draw()
-
     asteroid.animate()
-    cosmos.contain(asteroid)
-    asteroid.draw(cosmos.screen)
+    screen.contain(asteroid)
+
+    screen.draw()
+    screen.draw_object(asteroid)
 
     pygame.display.flip()
     clock.tick(30)
