@@ -39,14 +39,14 @@ class Screen:
 
 
 class Asteroid:
-    def __init__(self, pos=None):
+    def __init__(self, pos=None, radius=50):
         if not pos:
             pos = [400.0, 400.0]
 
         angle = 2 * math.pi * random.random()
         self.pos = pos
         self.dir = [5.0*math.sin(angle), 5.0*math.cos(angle)]
-        self.radius = 50
+        self.radius = radius
 
     def draw(self, surface):
         pos = [int(c) for c in self.pos]
@@ -54,6 +54,12 @@ class Asteroid:
 
     def animate(self):
         self.pos = list(map(operator.add, self.pos, self.dir))
+
+    def split(self):
+        if self.radius >= 30:
+            return [Asteroid(self.pos, self.radius - 10) for _ in range(2)]
+        else:
+            return None
 
 
 class Bullet:
@@ -107,6 +113,9 @@ while not done:
     for bullet in bullets:
         for asteroid in asteroids:
             if bullet.collides_with(asteroid):
+                new_asteroids = asteroid.split()
+                if new_asteroids:
+                    asteroids.extend(new_asteroids)
                 asteroids.remove(asteroid)
 
     for asteroid in asteroids:
