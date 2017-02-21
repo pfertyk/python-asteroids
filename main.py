@@ -117,6 +117,7 @@ while not done:
                 if new_asteroids:
                     asteroids.extend(new_asteroids)
                 asteroids.remove(asteroid)
+                bullets.remove(bullet)
 
     for asteroid in asteroids:
         asteroid.animate()
