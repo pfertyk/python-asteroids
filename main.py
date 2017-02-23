@@ -40,10 +40,9 @@ class Screen:
 
 
 class Object:
-    def __init__(self, pos, radius, speed):
-        angle = 2 * math.pi * random.random()
+    def __init__(self, pos, radius, speed, angle):
         self.pos = pos
-        self.dir = [speed*math.sin(angle), speed*math.cos(angle)]
+        self.dir = [speed*math.cos(angle), speed*math.sin(angle)]
         self.radius = radius
 
     def draw(self, surface):
@@ -58,7 +57,8 @@ class Asteroid(Object):
     color = COLOR_ASTEROID
 
     def __init__(self, pos, radius=50, speed=5.0):
-        super().__init__(pos, radius, speed)
+        angle = 2 * math.pi * random.random()
+        super().__init__(pos, radius, speed, angle)
 
     def split(self):
         if self.radius >= 30:
@@ -72,8 +72,8 @@ class Asteroid(Object):
 class Bullet(Object):
     color = COLOR_BULLET
 
-    def __init__(self, pos, radius=10, speed=9.0):
-        super().__init__(pos, radius, speed)
+    def __init__(self, pos, angle, radius=10, speed=9.0):
+        super().__init__(pos, radius, speed, angle)
 
     def collides_with(self, other_obj):
         distance = math.sqrt(
@@ -87,7 +87,7 @@ class Starship(Object):
     color = COLOR_STARSHIP
 
     def __init__(self, pos):
-        super().__init__(pos, 20, 0.0)
+        super().__init__(pos, 20, 0.0, 0)
         radius = self.radius
         self.surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
         pygame.draw.lines(
@@ -96,11 +96,11 @@ class Starship(Object):
         pygame.draw.circle(
             self.surface, self.color, (radius, radius), radius, 2
         )
-        self.angle = 0.0
+        self.angle = -90.0
         self.acc = 1.0
 
     def draw(self, surface):
-        sur = pygame.transform.rotozoom(self.surface, self.angle, 1.0)
+        sur = pygame.transform.rotozoom(self.surface, -self.angle-90.0, 1.0)
         pos = [int(c-sur.get_width()/2) for c in self.pos]
         surface.blit(sur, pos)
 
@@ -109,8 +109,8 @@ class Starship(Object):
         self.angle += 4.0 * direction
 
     def move(self):
-        self.dir[0] -= math.sin(self.angle/180*math.pi) * self.acc
-        self.dir[1] -= math.cos(self.angle/180*math.pi) * self.acc
+        self.dir[0] += math.cos(self.angle / 180.0 * math.pi) * self.acc
+        self.dir[1] += math.sin(self.angle / 180.0 * math.pi) * self.acc
 
 screen = Screen()
 starship = Starship([400, 400])
@@ -123,12 +123,6 @@ for _ in range(6):
     pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
     asteroids.append(Asteroid(pos))
 
-for _ in range(6):
-    angle = 2 * math.pi * random.random()
-    pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
-    bullets.append(Bullet(pos))
-
-
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (
@@ -136,12 +130,15 @@ while not done:
         ):
             done = True
 
-    if pygame.key.get_pressed()[pygame.K_UP]:
-        starship.move()
     if pygame.key.get_pressed()[pygame.K_RIGHT]:
         starship.rotate(True)
     elif pygame.key.get_pressed()[pygame.K_LEFT]:
         starship.rotate(False)
+    if pygame.key.get_pressed()[pygame.K_UP]:
+        starship.move()
+    if pygame.key.get_pressed()[pygame.K_SPACE]:
+        angle = starship.angle / 180.0 * math.pi
+        bullets.append(Bullet(starship.pos, angle))
 
     screen.draw()
 
