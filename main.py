@@ -5,14 +5,17 @@ import math
 
 pygame.init()
 clock = pygame.time.Clock()
+font = pygame.font.Font(None, 64)
 
 done = False
+status = ""
 
 
 COLOR_BACKGROUND = (0, 0, 80)
 COLOR_ASTEROID = (0, 100, 0)
 COLOR_BULLET = (100, 0, 0)
 COLOR_STARSHIP = (100, 100, 100)
+COLOR_FONT = (200, 200, 0)
 
 
 class Screen:
@@ -152,6 +155,9 @@ while not done:
                 bullets.remove(bullet)
                 break
 
+    if not asteroids:
+        status = "You won!"
+
     for asteroid in asteroids:
         asteroid.animate()
         screen.contain_object(asteroid)
@@ -165,6 +171,12 @@ while not done:
     starship.animate()
     screen.contain_object(starship)
     screen.draw_object(starship)
+
+    if status:
+        text = font.render(status, 1, COLOR_FONT)
+        rect = text.get_rect()
+        rect.center = (400, 400)
+        screen.background.blit(text, rect)
 
     pygame.display.flip()
     clock.tick(30)
