@@ -96,10 +96,16 @@ class Starship(Object):
         pygame.draw.circle(
             self.surface, self.color, (radius, radius), radius, 2
         )
+        self.angle = 0.0
 
     def draw(self, surface):
-        pos = [int(c-self.radius) for c in self.pos]
-        surface.blit(self.surface, pos)
+        sur = pygame.transform.rotozoom(self.surface, self.angle, 1.0)
+        pos = [int(c-sur.get_width()/2) for c in self.pos]
+        surface.blit(sur, pos)
+
+    def rotate(self, clockwise=True):
+        direction = 1 if clockwise else -1
+        self.angle += 4.0 * direction
 
 screen = Screen()
 starship = Starship([400, 400])
@@ -124,6 +130,11 @@ while not done:
             event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
         ):
             done = True
+
+    if pygame.key.get_pressed()[pygame.K_RIGHT]:
+        starship.rotate(True)
+    elif pygame.key.get_pressed()[pygame.K_LEFT]:
+        starship.rotate(False)
 
     screen.draw()
 
