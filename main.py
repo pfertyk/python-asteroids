@@ -39,13 +39,10 @@ class Screen:
 
 
 class Object:
-    def __init__(self, pos=None, radius=50):
-        if not pos:
-            pos = [400.0, 400.0]
-
+    def __init__(self, pos, radius, speed):
         angle = 2 * math.pi * random.random()
         self.pos = pos
-        self.dir = [5.0*math.sin(angle), 5.0*math.cos(angle)]
+        self.dir = [speed*math.sin(angle), speed*math.cos(angle)]
         self.radius = radius
 
     def draw(self, surface):
@@ -57,14 +54,8 @@ class Object:
 
 
 class Asteroid(Object):
-    def __init__(self, pos=None, radius=50):
-        if not pos:
-            pos = [400.0, 400.0]
-
-        angle = 2 * math.pi * random.random()
-        self.pos = pos
-        self.dir = [5.0*math.sin(angle), 5.0*math.cos(angle)]
-        self.radius = radius
+    def __init__(self, pos, radius=50, speed=5.0):
+        super().__init__(pos, radius, speed)
 
     def draw(self, surface):
         pos = [int(c) for c in self.pos]
@@ -72,7 +63,9 @@ class Asteroid(Object):
 
     def split(self):
         if self.radius >= 30:
-            return [Asteroid(self.pos, self.radius - 10) for _ in range(2)]
+            speed = random.random() * 5
+            radius = self.radius - 10
+            return [Asteroid(self.pos, radius, speed) for _ in range(2)]
         else:
             return None
 
