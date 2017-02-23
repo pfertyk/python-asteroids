@@ -10,7 +10,7 @@ done = False
 
 
 COLOR_BACKGROUND = (0, 0, 80)
-COLOR_CIRCLE = (0, 100, 0)
+COLOR_ASTEROID = (0, 100, 0)
 COLOR_BULLET = (100, 0, 0)
 
 
@@ -47,19 +47,17 @@ class Object:
 
     def draw(self, surface):
         pos = [int(c) for c in self.pos]
-        pygame.draw.circle(surface, COLOR_CIRCLE, pos, self.radius, 2)
+        pygame.draw.circle(surface, self.color, pos, self.radius, 2)
 
     def animate(self):
         self.pos = list(map(operator.add, self.pos, self.dir))
 
 
 class Asteroid(Object):
+    color = COLOR_ASTEROID
+
     def __init__(self, pos, radius=50, speed=5.0):
         super().__init__(pos, radius, speed)
-
-    def draw(self, surface):
-        pos = [int(c) for c in self.pos]
-        pygame.draw.circle(surface, COLOR_CIRCLE, pos, self.radius, 2)
 
     def split(self):
         if self.radius >= 30:
@@ -71,18 +69,10 @@ class Asteroid(Object):
 
 
 class Bullet(Object):
-    def __init__(self, pos=None):
-        if not pos:
-            pos = [300.0, 400.0]
+    color = COLOR_BULLET
 
-        angle = 2 * math.pi * random.random()
-        self.pos = pos
-        self.dir = [9.0*math.sin(angle), 9.0*math.cos(angle)]
-        self.radius = 10
-
-    def draw(self, surface):
-        pos = [int(c) for c in self.pos]
-        pygame.draw.circle(surface, COLOR_BULLET, pos, self.radius, 2)
+    def __init__(self, pos, radius=10, speed=9.0):
+        super().__init__(pos, radius, speed)
 
     def collides_with(self, other_obj):
         distance = math.sqrt(
