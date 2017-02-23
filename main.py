@@ -38,7 +38,7 @@ class Screen:
         obj.pos = pos
 
 
-class Asteroid:
+class Object:
     def __init__(self, pos=None, radius=50):
         if not pos:
             pos = [400.0, 400.0]
@@ -55,6 +55,21 @@ class Asteroid:
     def animate(self):
         self.pos = list(map(operator.add, self.pos, self.dir))
 
+
+class Asteroid(Object):
+    def __init__(self, pos=None, radius=50):
+        if not pos:
+            pos = [400.0, 400.0]
+
+        angle = 2 * math.pi * random.random()
+        self.pos = pos
+        self.dir = [5.0*math.sin(angle), 5.0*math.cos(angle)]
+        self.radius = radius
+
+    def draw(self, surface):
+        pos = [int(c) for c in self.pos]
+        pygame.draw.circle(surface, COLOR_CIRCLE, pos, self.radius, 2)
+
     def split(self):
         if self.radius >= 30:
             return [Asteroid(self.pos, self.radius - 10) for _ in range(2)]
@@ -62,7 +77,7 @@ class Asteroid:
             return None
 
 
-class Bullet:
+class Bullet(Object):
     def __init__(self, pos=None):
         if not pos:
             pos = [300.0, 400.0]
@@ -75,9 +90,6 @@ class Bullet:
     def draw(self, surface):
         pos = [int(c) for c in self.pos]
         pygame.draw.circle(surface, COLOR_BULLET, pos, self.radius, 2)
-
-    def animate(self):
-        self.pos = list(map(operator.add, self.pos, self.dir))
 
     def collides_with(self, other_obj):
         distance = math.sqrt(
