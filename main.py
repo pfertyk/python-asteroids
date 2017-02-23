@@ -12,6 +12,7 @@ done = False
 COLOR_BACKGROUND = (0, 0, 80)
 COLOR_ASTEROID = (0, 100, 0)
 COLOR_BULLET = (100, 0, 0)
+COLOR_STARSHIP = (100, 100, 100)
 
 
 class Screen:
@@ -81,15 +82,28 @@ class Bullet(Object):
         )
         return distance < self.radius + other_obj.radius
 
+
+class Starship(Object):
+    color = COLOR_STARSHIP
+
+    def __init__(self, pos, radius=20, speed=0.0):
+        super().__init__(pos, radius, speed)
+
+    def draw(self, surface):
+        pos = [int(c) for c in self.pos]
+        pygame.draw.circle(surface, self.color, pos, self.radius, 2)
+
 screen = Screen()
+starship = Starship([400, 400])
 
 asteroids = []
+bullets = []
+
 for _ in range(6):
     angle = 2 * math.pi * random.random()
     pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
     asteroids.append(Asteroid(pos))
 
-bullets = []
 for _ in range(6):
     angle = 2 * math.pi * random.random()
     pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
@@ -124,6 +138,8 @@ while not done:
         bullet.animate()
         screen.contain_object(bullet)
         screen.draw_object(bullet)
+
+    screen.draw_object(starship)
 
     pygame.display.flip()
     clock.tick(30)
