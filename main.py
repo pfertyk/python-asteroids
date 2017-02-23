@@ -97,6 +97,7 @@ class Starship(Object):
             self.surface, self.color, (radius, radius), radius, 2
         )
         self.angle = 0.0
+        self.acc = 1.0
 
     def draw(self, surface):
         sur = pygame.transform.rotozoom(self.surface, self.angle, 1.0)
@@ -106,6 +107,10 @@ class Starship(Object):
     def rotate(self, clockwise=True):
         direction = 1 if clockwise else -1
         self.angle += 4.0 * direction
+
+    def move(self):
+        self.dir[0] -= math.sin(self.angle/180*math.pi) * self.acc
+        self.dir[1] -= math.cos(self.angle/180*math.pi) * self.acc
 
 screen = Screen()
 starship = Starship([400, 400])
@@ -131,6 +136,8 @@ while not done:
         ):
             done = True
 
+    if pygame.key.get_pressed()[pygame.K_UP]:
+        starship.move()
     if pygame.key.get_pressed()[pygame.K_RIGHT]:
         starship.rotate(True)
     elif pygame.key.get_pressed()[pygame.K_LEFT]:
@@ -158,6 +165,8 @@ while not done:
         screen.contain_object(bullet)
         screen.draw_object(bullet)
 
+    starship.animate()
+    screen.contain_object(starship)
     screen.draw_object(starship)
 
     pygame.display.flip()
