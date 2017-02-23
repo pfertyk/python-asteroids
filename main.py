@@ -86,12 +86,20 @@ class Bullet(Object):
 class Starship(Object):
     color = COLOR_STARSHIP
 
-    def __init__(self, pos, radius=20, speed=0.0):
-        super().__init__(pos, radius, speed)
+    def __init__(self, pos):
+        super().__init__(pos, 20, 0.0)
+        radius = self.radius
+        self.surface = pygame.Surface((radius*2, radius*2), pygame.SRCALPHA)
+        pygame.draw.lines(
+            self.surface, self.color, True, [(20, 0), (10, 20), (30, 20)], 2
+        )
+        pygame.draw.circle(
+            self.surface, self.color, (radius, radius), radius, 2
+        )
 
     def draw(self, surface):
-        pos = [int(c) for c in self.pos]
-        pygame.draw.circle(surface, self.color, pos, self.radius, 2)
+        pos = [int(c-self.radius) for c in self.pos]
+        surface.blit(self.surface, pos)
 
 screen = Screen()
 starship = Starship([400, 400])
