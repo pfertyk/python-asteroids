@@ -129,6 +129,9 @@ while not done:
             event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
         ):
             done = True
+        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
+            angle = starship.angle / 180.0 * math.pi
+            bullets.append(Bullet(starship.pos, angle))
 
     if pygame.key.get_pressed()[pygame.K_RIGHT]:
         starship.rotate(True)
@@ -136,9 +139,6 @@ while not done:
         starship.rotate(False)
     if pygame.key.get_pressed()[pygame.K_UP]:
         starship.move()
-    if pygame.key.get_pressed()[pygame.K_SPACE]:
-        angle = starship.angle / 180.0 * math.pi
-        bullets.append(Bullet(starship.pos, angle))
 
     screen.draw()
 
