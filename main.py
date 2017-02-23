@@ -55,6 +55,13 @@ class Object:
     def animate(self):
         self.pos = list(map(operator.add, self.pos, self.dir))
 
+    def collides_with(self, other_obj):
+        distance = math.sqrt(
+            (self.pos[0]-other_obj.pos[0])**2 +
+            (self.pos[1]-other_obj.pos[1])**2
+        )
+        return distance < self.radius + other_obj.radius
+
 
 class Asteroid(Object):
     color = COLOR_ASTEROID
@@ -77,13 +84,6 @@ class Bullet(Object):
 
     def __init__(self, pos, angle, radius=10, speed=9.0):
         super().__init__(pos, radius, speed, angle)
-
-    def collides_with(self, other_obj):
-        distance = math.sqrt(
-            (self.pos[0]-other_obj.pos[0])**2 +
-            (self.pos[1]-other_obj.pos[1])**2
-        )
-        return distance < self.radius + other_obj.radius
 
 
 class Starship(Object):
@@ -133,30 +133,28 @@ while not done:
         ):
             done = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            angle = starship.angle / 180.0 * math.pi
-            bullets.append(Bullet(starship.pos, angle))
-
-    if pygame.key.get_pressed()[pygame.K_RIGHT]:
-        starship.rotate(True)
-    elif pygame.key.get_pressed()[pygame.K_LEFT]:
-        starship.rotate(False)
-    if pygame.key.get_pressed()[pygame.K_UP]:
-        starship.move()
+            if starship:
+                angle = starship.angle / 180.0 * math.pi
+                bullets.append(Bullet(starship.pos, angle))
 
     screen.draw()
 
-    for bullet in bullets:
+    if asteroids or starship:
         for asteroid in asteroids:
-            if bullet.collides_with(asteroid):
-                new_asteroids = asteroid.split()
-                if new_asteroids:
-                    asteroids.extend(new_asteroids)
-                asteroids.remove(asteroid)
-                bullets.remove(bullet)
-                break
+            for bullet in bullets:
+                if bullet.collides_with(asteroid):
+                    new_asteroids = asteroid.split()
+                    if new_asteroids:
+                        asteroids.extend(new_asteroids)
+                    asteroids.remove(asteroid)
+                    bullets.remove(bullet)
+                    if not asteroids:
+                        status = "You won!"
+                    break
 
-    if not asteroids:
-        status = "You won!"
+            if starship and asteroid.collides_with(starship):
+                starship = None
+                status = "You lost!"
 
     for asteroid in asteroids:
         asteroid.animate()
@@ -168,9 +166,17 @@ while not done:
         screen.contain_object(bullet)
         screen.draw_object(bullet)
 
-    starship.animate()
-    screen.contain_object(starship)
-    screen.draw_object(starship)
+    if starship:
+        if pygame.key.get_pressed()[pygame.K_RIGHT]:
+            starship.rotate(True)
+        elif pygame.key.get_pressed()[pygame.K_LEFT]:
+            starship.rotate(False)
+        if pygame.key.get_pressed()[pygame.K_UP]:
+            starship.move()
+
+        starship.animate()
+        screen.contain_object(starship)
+        screen.draw_object(starship)
 
     if status:
         text = font.render(status, 1, COLOR_FONT)
