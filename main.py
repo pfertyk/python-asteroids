@@ -11,7 +11,6 @@ done = False
 status = ""
 
 
-COLOR_BACKGROUND = (0, 0, 80)
 COLOR_ASTEROID = (0, 100, 0)
 COLOR_BULLET = (100, 0, 0)
 COLOR_STARSHIP = (100, 100, 100)
@@ -22,10 +21,9 @@ class Screen:
     def __init__(self, size=(800, 800)):
         self.size = size
         self.background = pygame.display.set_mode(size)
-        self.image = pygame.image.load('earth.png')
+        self.image = pygame.image.load('earth.png').convert()
 
     def draw(self):
-        # self.background.fill(COLOR_BACKGROUND)
         self.background.blit(self.image, (0, 0))
 
     def draw_object(self, obj):
