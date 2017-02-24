@@ -22,9 +22,11 @@ class Screen:
     def __init__(self, size=(800, 800)):
         self.size = size
         self.background = pygame.display.set_mode(size)
+        self.image = pygame.image.load('earth.png')
 
     def draw(self):
-        self.background.fill(COLOR_BACKGROUND)
+        # self.background.fill(COLOR_BACKGROUND)
+        self.background.blit(self.image, (0, 0))
 
     def draw_object(self, obj):
         obj.draw(self.background)
