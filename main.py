@@ -31,6 +31,7 @@ class Screen:
 
     def contain_object(self, obj):
         pos = obj.pos
+        orig_pos = pos[:]
         if pos[0] > self.size[0]:
             pos[0] = pos[0] - self.size[0]
         if pos[1] > self.size[1]:
@@ -39,7 +40,7 @@ class Screen:
             pos[0] = pos[0] + self.size[0]
         if pos[1] < 1:
             pos[1] = pos[1] + self.size[1]
-        obj.pos = pos
+        return pos != orig_pos
 
 
 class Object:
@@ -163,7 +164,9 @@ while not done:
 
     for bullet in bullets:
         bullet.animate()
-        screen.contain_object(bullet)
+        if screen.contain_object(bullet):
+            bullets.remove(bullet)
+            continue
         screen.draw_object(bullet)
 
     if starship:
