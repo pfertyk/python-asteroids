@@ -96,12 +96,11 @@ class Asteroid(Object):
 class Bullet(Object):
     image = IMG_BULLET
 
-    def __init__(self, pos, angle, radius=10, speed=8.0):
+    def __init__(self, pos, angle, radius=5, speed=8.0):
         super().__init__(pos, radius, speed, angle)
 
 
 class Starship(Object):
-
     def __init__(self, pos):
         super().__init__(pos, 20, 0.0, 0)
         self.angle = -90.0
@@ -129,7 +128,7 @@ bullets = []
 
 for _ in range(6):
     angle = 2 * math.pi * random.random()
-    pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
+    pos = [400+300*math.sin(angle), 300+300*math.cos(angle)]
     asteroids.append(Asteroid(pos))
 
 while not DONE:
