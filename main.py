@@ -5,8 +5,7 @@ import math
 from itertools import chain
 
 pygame.init()
-clock = pygame.time.Clock()
-font = pygame.font.Font(None, 64)
+
 screen = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('Asteroids')
 
@@ -16,6 +15,7 @@ IMG_ASTEROID_MEDIUM = pygame.image.load('asteroid-medium.png').convert_alpha()
 IMG_ASTEROID_SMALL = pygame.image.load('asteroid-small.png').convert_alpha()
 IMG_BULLET = pygame.image.load('bullet.png').convert_alpha()
 IMG_STARSHIP = pygame.image.load('starship.png').convert_alpha()
+CLOCK = pygame.time.Clock()
 
 DONE = False
 STATUS_TEXT = ''
@@ -25,6 +25,7 @@ class Screen:
     def __init__(self, screen_surface):
         self.background = screen_surface
         self.size = screen_surface.get_size()
+        self.font = pygame.font.Font(None, 64)
 
     def draw(self):
         self.background.blit(IMG_EARTH, (0, 0))
@@ -34,7 +35,7 @@ class Screen:
 
     def print(self, text):
         if text:
-            text = font.render(text, 1, (200, 200, 0))
+            text = self.font.render(text, 1, (200, 200, 0))
             rect = text.get_rect()
             rect.center = (self.size[0]/2, self.size[1]/2)
             screen.background.blit(text, rect)
@@ -181,4 +182,4 @@ while not DONE:
     screen.print(STATUS_TEXT)
 
     pygame.display.flip()
-    clock.tick(60)
+    CLOCK.tick(60)
