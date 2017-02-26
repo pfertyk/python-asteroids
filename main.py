@@ -133,12 +133,12 @@ for _ in range(6):
 
 while not DONE:
     for event in pygame.event.get():
-        if event.type == pygame.QUIT or (
-            event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
-        ):
+        if event.type == pygame.QUIT:
             DONE = True
-        if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
-            if starship:
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_ESCAPE:
+                DONE = True
+            elif event.key == pygame.K_SPACE and starship:
                 angle = starship.angle / 180.0 * math.pi
                 bullets.append(Bullet(starship.pos, angle))
 
