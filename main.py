@@ -2,6 +2,7 @@ import pygame
 import operator
 import random
 import math
+from itertools import chain
 
 pygame.init()
 clock = pygame.time.Clock()
@@ -173,17 +174,9 @@ while not DONE:
 
     screen.draw()
 
-    for asteroid in asteroids:
-        asteroid.animate()
-        screen.draw_object(asteroid)
-
-    for bullet in bullets:
-        bullet.animate()
-        screen.draw_object(bullet)
-
-    if starship:
-        starship.animate()
-        screen.draw_object(starship)
+    for obj in chain(asteroids, bullets, (starship, ) if starship else ()):
+        obj.animate()
+        screen.draw_object(obj)
 
     screen.print(STATUS_TEXT)
 
