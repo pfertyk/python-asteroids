@@ -7,6 +7,7 @@ pygame.init()
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 64)
 screen = pygame.display.set_mode((800, 600))
+pygame.display.set_caption('Asteroids')
 
 IMG_EARTH = pygame.image.load('earth.png').convert()
 IMG_ASTEROID_BIG = pygame.image.load('asteroid-big.png').convert_alpha()
@@ -16,7 +17,7 @@ IMG_BULLET = pygame.image.load('bullet.png').convert_alpha()
 IMG_STARSHIP = pygame.image.load('starship.png').convert_alpha()
 
 DONE = False
-STATUS_TEXT = ""
+STATUS_TEXT = ''
 
 
 class Screen:
