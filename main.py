@@ -149,41 +149,40 @@ while not DONE:
             starship.rotate(False)
         if pygame.key.get_pressed()[pygame.K_UP]:
             starship.move()
+            screen.contain_object(starship)
 
-    if asteroids or starship:
-        for asteroid in asteroids:
-            for bullet in bullets:
-                if bullet.collides_with(asteroid):
-                    new_asteroids = asteroid.split()
-                    if new_asteroids:
-                        asteroids.extend(new_asteroids)
-                    asteroids.remove(asteroid)
-                    bullets.remove(bullet)
-                    if not asteroids:
-                        STATUS_TEXT = "You won!"
-                    break
+    for asteroid in asteroids:
+        screen.contain_object(asteroid)
+        for bullet in bullets:
+            if screen.contain_object(bullet):
+                bullets.remove(bullet)
+                continue
+            if bullet.collides_with(asteroid):
+                new_asteroids = asteroid.split()
+                if new_asteroids:
+                    asteroids.extend(new_asteroids)
+                asteroids.remove(asteroid)
+                bullets.remove(bullet)
+                if not asteroids:
+                    STATUS_TEXT = "You won!"
+                break
 
-            if starship and asteroid.collides_with(starship):
-                starship = None
-                STATUS_TEXT = "You lost!"
+        if starship and asteroid.collides_with(starship):
+            starship = None
+            STATUS_TEXT = "You lost!"
 
     screen.draw()
 
     for asteroid in asteroids:
         asteroid.animate()
-        screen.contain_object(asteroid)
         screen.draw_object(asteroid)
 
     for bullet in bullets:
         bullet.animate()
-        if screen.contain_object(bullet):
-            bullets.remove(bullet)
-            continue
         screen.draw_object(bullet)
 
     if starship:
         starship.animate()
-        screen.contain_object(starship)
         screen.draw_object(starship)
 
     screen.print(STATUS_TEXT)
