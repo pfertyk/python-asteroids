@@ -6,7 +6,7 @@ from itertools import chain
 
 pygame.init()
 
-screen = pygame.display.set_mode((800, 600))
+SCREEN = pygame.display.set_mode((800, 600))
 pygame.display.set_caption('Asteroids')
 
 IMG_EARTH = pygame.image.load('earth.png').convert()
@@ -122,7 +122,7 @@ class Starship(Object):
         self.dir[1] += math.sin(self.angle / 180.0 * math.pi) * self.acc
 
 
-screen = Screen(screen)
+screen = Screen(SCREEN)
 starship = Starship([400, 300])
 
 asteroids = []
@@ -134,6 +134,7 @@ for _ in range(6):
     asteroids.append(Asteroid(pos))
 
 while not DONE:
+    # EVENTS
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             DONE = True
@@ -143,7 +144,7 @@ while not DONE:
             elif event.key == pygame.K_SPACE and starship:
                 angle = starship.angle / 180.0 * math.pi
                 bullets.append(Bullet(starship.pos, angle))
-
+    # CONTROL
     if starship:
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
             starship.rotate(True)
@@ -172,13 +173,11 @@ while not DONE:
         if starship and asteroid.collides_with(starship):
             starship = None
             STATUS_TEXT = "You lost!"
-
+    # DRAWING
     screen.draw()
-
     for obj in chain(asteroids, bullets, (starship, ) if starship else ()):
         obj.animate()
         screen.draw_object(obj)
-
     screen.print(STATUS_TEXT)
 
     pygame.display.flip()
