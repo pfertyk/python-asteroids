@@ -18,9 +18,6 @@ IMG_BULLET = pygame.image.load('bullet.png').convert_alpha()
 IMG_STARSHIP = pygame.image.load('starship.png').convert_alpha()
 CLOCK = pygame.time.Clock()
 
-DONE = False
-STATUS_TEXT = ''
-
 
 # GAME CLASSES
 class Screen:
@@ -129,19 +126,22 @@ starship = Starship([400, 300])
 asteroids = []
 bullets = []
 
+done = False
+status_text = ''
+
 for _ in range(6):
     angle = 2 * math.pi * random.random()
     pos = [400+300*math.sin(angle), 300+300*math.cos(angle)]
     asteroids.append(Asteroid(pos))
 
-while not DONE:
+while not done:
     # EVENTS
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
-            DONE = True
+            done = True
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_ESCAPE:
-                DONE = True
+                done = True
             elif event.key == pygame.K_SPACE and starship:
                 angle = starship.angle / 180.0 * math.pi
                 bullets.append(Bullet(starship.pos, angle))
@@ -168,18 +168,18 @@ while not DONE:
                 asteroids.remove(asteroid)
                 bullets.remove(bullet)
                 if not asteroids:
-                    STATUS_TEXT = "You won!"
+                    status_text = "You won!"
                 break
 
         if starship and asteroid.collides_with(starship):
             starship = None
-            STATUS_TEXT = "You lost!"
+            status_text = "You lost!"
     # DRAWING
     screen.draw()
     for obj in chain(asteroids, bullets, (starship, ) if starship else ()):
         obj.animate()
         screen.draw_object(obj)
-    screen.print(STATUS_TEXT)
+    screen.print(status_text)
 
     pygame.display.flip()
     CLOCK.tick(60)
