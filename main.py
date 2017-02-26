@@ -76,21 +76,20 @@ class Object:
 
 
 class Asteroid(Object):
-    def __init__(self, pos, image=IMG_ASTEROID_BIG, radius=50, speed=2.0):
+    def __init__(self, pos, image=IMG_ASTEROID_BIG, radius=50, speed=3.0):
         self.image = image
         angle = 2 * math.pi * random.random()
-        self.speed = speed
+        speed = max(1, random.random() * speed)
         super().__init__(pos, radius, speed, angle)
 
     def split(self):
         if self.radius > 30:
-            speed = self.speed
             radius = self.radius - 10
             if radius == 40:
                 image = IMG_ASTEROID_MEDIUM
             else:
                 image = IMG_ASTEROID_SMALL
-            return [Asteroid(self.pos, image, radius, speed) for _ in range(2)]
+            return [Asteroid(self.pos, image, radius) for _ in range(2)]
         else:
             return None
 
