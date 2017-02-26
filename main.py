@@ -4,6 +4,7 @@ import random
 import math
 from itertools import chain
 
+# PYGAME RESOURCES
 pygame.init()
 
 SCREEN = pygame.display.set_mode((800, 600))
@@ -21,6 +22,7 @@ DONE = False
 STATUS_TEXT = ''
 
 
+# GAME CLASSES
 class Screen:
     def __init__(self, screen_surface):
         self.background = screen_surface
@@ -120,7 +122,7 @@ class Starship(Object):
         self.dir[0] += math.cos(self.angle / 180.0 * math.pi) * self.acc
         self.dir[1] += math.sin(self.angle / 180.0 * math.pi) * self.acc
 
-
+# GAME INIT
 screen = Screen(SCREEN)
 starship = Starship([400, 300])
 
@@ -151,7 +153,7 @@ while not DONE:
             starship.rotate(False)
         if pygame.key.get_pressed()[pygame.K_UP]:
             starship.move()
-            screen.contain_object(starship)
+        screen.contain_object(starship)
 
     for asteroid in asteroids:
         screen.contain_object(asteroid)
