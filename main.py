@@ -15,8 +15,8 @@ IMG_ASTEROID_SMALL = pygame.image.load('asteroid-small.png').convert_alpha()
 IMG_BULLET = pygame.image.load('bullet.png').convert_alpha()
 IMG_STARSHIP = pygame.image.load('starship.png').convert_alpha()
 
-done = False
-status = ""
+DONE = False
+STATUS_TEXT = ""
 
 
 class Screen:
@@ -29,6 +29,13 @@ class Screen:
 
     def draw_object(self, obj):
         obj.draw(self.background)
+
+    def print(self, text):
+        if text:
+            text = font.render(text, 1, (200, 200, 0))
+            rect = text.get_rect()
+            rect.center = (self.size[0]/2, self.size[1]/2)
+            screen.background.blit(text, rect)
 
     def contain_object(self, obj):
         pos = obj.pos
@@ -114,7 +121,7 @@ class Starship(Object):
 
 
 screen = Screen(screen)
-starship = Starship([400, 400])
+starship = Starship([400, 300])
 
 asteroids = []
 bullets = []
@@ -124,18 +131,24 @@ for _ in range(6):
     pos = [400+300*math.sin(angle), 400+300*math.cos(angle)]
     asteroids.append(Asteroid(pos))
 
-while not done:
+while not DONE:
     for event in pygame.event.get():
         if event.type == pygame.QUIT or (
             event.type == pygame.KEYDOWN and event.key == pygame.K_ESCAPE
         ):
-            done = True
+            DONE = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             if starship:
                 angle = starship.angle / 180.0 * math.pi
                 bullets.append(Bullet(starship.pos, angle))
 
-    screen.draw()
+    if starship:
+        if pygame.key.get_pressed()[pygame.K_RIGHT]:
+            starship.rotate(True)
+        elif pygame.key.get_pressed()[pygame.K_LEFT]:
+            starship.rotate(False)
+        if pygame.key.get_pressed()[pygame.K_UP]:
+            starship.move()
 
     if asteroids or starship:
         for asteroid in asteroids:
@@ -147,12 +160,14 @@ while not done:
                     asteroids.remove(asteroid)
                     bullets.remove(bullet)
                     if not asteroids:
-                        status = "You won!"
+                        STATUS_TEXT = "You won!"
                     break
 
             if starship and asteroid.collides_with(starship):
                 starship = None
-                status = "You lost!"
+                STATUS_TEXT = "You lost!"
+
+    screen.draw()
 
     for asteroid in asteroids:
         asteroid.animate()
@@ -167,22 +182,11 @@ while not done:
         screen.draw_object(bullet)
 
     if starship:
-        if pygame.key.get_pressed()[pygame.K_RIGHT]:
-            starship.rotate(True)
-        elif pygame.key.get_pressed()[pygame.K_LEFT]:
-            starship.rotate(False)
-        if pygame.key.get_pressed()[pygame.K_UP]:
-            starship.move()
-
         starship.animate()
         screen.contain_object(starship)
         screen.draw_object(starship)
 
-    if status:
-        text = font.render(status, 1, (200, 200, 0))
-        rect = text.get_rect()
-        rect.center = (400, 400)
-        screen.background.blit(text, rect)
+    screen.print(STATUS_TEXT)
 
     pygame.display.flip()
     clock.tick(60)
