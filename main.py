@@ -66,14 +66,15 @@ class Object:
 
 
 class Asteroid(Object):
-    def __init__(self, pos, image=IMG_ASTEROID_BIG, radius=50, speed=5.0):
+    def __init__(self, pos, image=IMG_ASTEROID_BIG, radius=50, speed=2.0):
         self.image = image
         angle = 2 * math.pi * random.random()
+        self.speed = speed
         super().__init__(pos, radius, speed, angle)
 
     def split(self):
         if self.radius > 30:
-            speed = random.random() * 5
+            speed = self.speed
             radius = self.radius - 10
             if radius == 40:
                 image = IMG_ASTEROID_MEDIUM
@@ -87,7 +88,7 @@ class Asteroid(Object):
 class Bullet(Object):
     image = IMG_BULLET
 
-    def __init__(self, pos, angle, radius=10, speed=9.0):
+    def __init__(self, pos, angle, radius=10, speed=8.0):
         super().__init__(pos, radius, speed, angle)
 
 
@@ -96,7 +97,7 @@ class Starship(Object):
     def __init__(self, pos):
         super().__init__(pos, 20, 0.0, 0)
         self.angle = -90.0
-        self.acc = 1.0
+        self.acc = 0.4
 
     def draw(self, surface):
         sur = pygame.transform.rotozoom(IMG_STARSHIP, -self.angle-90.0, 1.0)
@@ -184,4 +185,4 @@ while not done:
         screen.background.blit(text, rect)
 
     pygame.display.flip()
-    clock.tick(30)
+    clock.tick(60)
