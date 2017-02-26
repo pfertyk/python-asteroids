@@ -6,7 +6,7 @@ import math
 pygame.init()
 clock = pygame.time.Clock()
 font = pygame.font.Font(None, 64)
-screen = pygame.display.set_mode((800, 800))
+screen = pygame.display.set_mode((800, 600))
 
 IMG_EARTH = pygame.image.load('earth.png').convert()
 IMG_ASTEROID_BIG = pygame.image.load('asteroid-big.png').convert_alpha()
