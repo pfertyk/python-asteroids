@@ -31,21 +31,6 @@ def print_message(surface, message, font):
         surface.blit(text, rect)
 
 
-class Cosmos:
-    def __init__(self, size):
-        self.size = size
-
-    def draw(self, surface):
-        surface.blit(IMG_EARTH, (0, 0))
-
-    def contain_object(self, obj):
-        orig_pos = tuple(obj.pos)
-        x, y = obj.pos
-        w, h = self.size
-        obj.pos = (x % w, y % h)
-        return obj.pos != orig_pos
-
-
 class GameObject:
     def __init__(self, pos, radius, speed, angle):
         self.pos = pos
@@ -55,6 +40,13 @@ class GameObject:
     def draw(self, surface):
         pos = [int(c-self.radius) for c in self.pos]
         surface.blit(self.image, pos)
+
+    def contain(self, surface):
+        orig_pos = tuple(self.pos)
+        x, y = self.pos
+        w, h = surface.get_size()
+        self.pos = (x % w, y % h)
+        return self.pos != orig_pos
 
     def animate(self):
         self.pos = list(map(operator.add, self.pos, self.dir))
@@ -113,7 +105,6 @@ class Starship(GameObject):
         self.dir[1] += math.sin(self.angle / 180.0 * math.pi) * self.acc
 
 # GAME INIT
-cosmos = Cosmos(SCREEN.get_size())
 starship = Starship([400, 300])
 
 asteroids = []
@@ -146,12 +137,12 @@ while not done:
             starship.rotate(False)
         if pygame.key.get_pressed()[pygame.K_UP]:
             starship.move()
-        cosmos.contain_object(starship)
+        starship.contain(SCREEN)
 
     for asteroid in asteroids:
-        cosmos.contain_object(asteroid)
+        asteroid.contain(SCREEN)
         for bullet in bullets:
-            if cosmos.contain_object(bullet):
+            if bullet.contain(SCREEN):
                 bullets.remove(bullet)
                 continue
             if bullet.collides_with(asteroid):
@@ -168,7 +159,7 @@ while not done:
             starship = None
             status_text = "You lost!"
     # DRAWING
-    cosmos.draw(SCREEN)
+    SCREEN.blit(IMG_EARTH, (0, 0))
     for obj in chain(asteroids, bullets, (starship, ) if starship else ()):
         obj.animate()
         obj.draw(SCREEN)
