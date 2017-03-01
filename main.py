@@ -1,8 +1,8 @@
 import pygame
-import operator
 import random
-import math
 from itertools import chain
+
+from utils import GameObject as GM, get_random_pos, change_dir
 
 # PYGAME RESOURCES
 pygame.init()
@@ -31,38 +31,16 @@ def print_message(surface, message, font):
         surface.blit(text, rect)
 
 
-class GameObject:
-    def __init__(self, pos, radius, speed, angle):
-        self.pos = pos
-        self.dir = [speed*math.cos(angle), speed*math.sin(angle)]
-        self.radius = radius
-
+class GameObject(GM):
     def draw(self, surface):
         pos = [int(c-self.radius) for c in self.pos]
         surface.blit(self.image, pos)
-
-    def contain(self, surface):
-        orig_pos = tuple(self.pos)
-        x, y = self.pos
-        w, h = surface.get_size()
-        self.pos = (x % w, y % h)
-        return self.pos != orig_pos
-
-    def animate(self):
-        self.pos = list(map(operator.add, self.pos, self.dir))
-
-    def collides_with(self, other_obj):
-        distance = math.sqrt(
-            (self.pos[0] - other_obj.pos[0])**2 +
-            (self.pos[1] - other_obj.pos[1])**2
-        )
-        return distance < self.radius + other_obj.radius
 
 
 class Asteroid(GameObject):
     def __init__(self, pos, image=IMG_ASTEROID_BIG, radius=50, speed=3.0):
         self.image = image
-        angle = 2 * math.pi * random.random()
+        angle = 360 * random.random()
         speed = max(1, random.random() * speed)
         super().__init__(pos, radius, speed, angle)
 
@@ -101,8 +79,7 @@ class Starship(GameObject):
         self.angle += 4.0 * direction
 
     def move(self):
-        self.dir[0] += math.cos(self.angle / 180.0 * math.pi) * self.acc
-        self.dir[1] += math.sin(self.angle / 180.0 * math.pi) * self.acc
+        change_dir(self.dir, self.angle, self.acc)
 
 # GAME INIT
 starship = Starship([400, 300])
@@ -114,9 +91,7 @@ done = False
 status_text = ''
 
 for _ in range(6):
-    angle = 2 * math.pi * random.random()
-    pos = [400 + 300 * math.sin(angle), 300 + 300 * math.cos(angle)]
-    asteroids.append(Asteroid(pos))
+    asteroids.append(Asteroid(get_random_pos(800, 600)))
 
 while not done:
     # EVENTS
@@ -127,8 +102,7 @@ while not done:
             if event.key == pygame.K_ESCAPE:
                 done = True
             elif event.key == pygame.K_SPACE and starship:
-                angle = starship.angle / 180.0 * math.pi
-                bullets.append(Bullet(starship.pos, angle))
+                bullets.append(Bullet(starship.pos, starship.angle))
     # LOGIC
     if starship:
         if pygame.key.get_pressed()[pygame.K_RIGHT]:
